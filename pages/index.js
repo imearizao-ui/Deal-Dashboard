@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import Link from 'next/link';
 import DealCard from '../components/DealCard';
 import UpdateModal from '../components/UpdateModal';
 import Avatar, { getResponsableColor } from '../components/Avatar';
@@ -73,6 +74,17 @@ export default function Dashboard() {
               </svg>
             </div>
             <span className="font-semibold text-white text-sm tracking-tight">Deal Dashboard</span>
+            <div className="flex items-center gap-1 ml-4">
+              <span className="px-3 py-1.5 rounded-lg text-xs bg-indigo-600/20 text-indigo-300 font-medium">
+                Deals
+              </span>
+              <Link href="/metrics" className="px-3 py-1.5 rounded-lg text-xs text-slate-400 hover:text-white hover:bg-white/5 transition">
+                Métricas
+              </Link>
+              <Link href="/overview" className="px-3 py-1.5 rounded-lg text-xs text-slate-400 hover:text-white hover:bg-white/5 transition">
+                Visión general
+              </Link>
+            </div>
           </div>
 
           {/* Responsable quick-select for updates */}
