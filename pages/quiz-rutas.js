@@ -68,6 +68,7 @@ export default function QuizRutas() {
   const [hits, setHits] = useState(0);
   const [board, setBoard] = useState([]);
   const [boardNote, setBoardNote] = useState('');
+  const [spectator, setSpectator] = useState(false);
   const startRef = useRef(0);
   const timerRef = useRef(null);
 
@@ -108,6 +109,7 @@ export default function QuizRutas() {
       opts: shuffle(item.o.map((t, i) => ({ t, correct: i === item.a }))),
     })));
     setQi(0); setScore(0); setHits(0); setPicked(null);
+    setSpectator(false);
     startRef.current = Date.now();
     setScreen('quiz');
   }
@@ -154,6 +156,7 @@ export default function QuizRutas() {
           <input value={nick} onChange={(e) => setNick(e.target.value)} maxLength={30}
             placeholder="Tu nombre (o nombre de guerra)" onKeyDown={(e) => e.key === 'Enter' && start()} />
           <button className="go" onClick={start} disabled={!nick.trim()}>¡A jugar!</button>
+          <button className="watch" onClick={() => { setSpectator(true); fetchBoard(); setScreen('end'); }}>Solo ver el marcador 👀</button>
           {board.length > 0 && (
             <p className="teaser">Ya han jugado {board.length}: {board.slice(0, 3).map((r, i) => `${MEDALS[i] || ''} ${r.nick} (${r.score})`).join(' · ')}</p>
           )}
@@ -191,7 +194,7 @@ export default function QuizRutas() {
       {screen === 'end' && (
         <div className="card">
           <div className="big">🏆</div>
-          <h1>{hits} de {QUESTIONS.length} · {score} puntos</h1>
+          <h1>{spectator ? 'Marcador en directo' : `${hits} de ${QUESTIONS.length} · ${score} puntos`}</h1>
           <p className="sub">Marcador en directo — se actualiza según va terminando la gente</p>
           <table>
             <thead><tr><th></th><th>Nombre</th><th>Puntos</th><th>Aciertos</th></tr></thead>
@@ -204,7 +207,7 @@ export default function QuizRutas() {
             </tbody>
           </table>
           {boardNote && <p className="note">{boardNote}</p>}
-          <button className="go" onClick={start}>Jugar otra vez</button>
+          {!spectator && <button className="go" onClick={start}>Jugar otra vez</button>}
         </div>
       )}
 
@@ -223,6 +226,7 @@ export default function QuizRutas() {
         input { width: 100%; box-sizing: border-box; margin-top: 16px; padding: 14px 16px; border-radius: 12px; border: 1px solid #3a3346; background: #141118; color: #f4f1ea; font-size: 17px; }
         .go { margin-top: 16px; width: 100%; padding: 14px; border: none; border-radius: 12px; background: #ffd23f; color: #141118; font-size: 18px; font-weight: 700; cursor: pointer; }
         .go:disabled { opacity: 0.4; cursor: default; }
+        .watch { margin-top: 10px; width: 100%; padding: 12px; border: 1px solid #3a3346; border-radius: 12px; background: transparent; color: #b9b3c4; font-size: 16px; cursor: pointer; }
         .top { display: flex; justify-content: space-between; color: #b9b3c4; font-size: 15px; font-weight: 600; }
         .timer.low { color: #ff6b6b; }
         .opts { display: flex; flex-direction: column; gap: 10px; }
