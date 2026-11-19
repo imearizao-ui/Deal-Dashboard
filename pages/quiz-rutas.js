@@ -36,6 +36,18 @@ const QUESTIONS = [
   { q: 'El resultado que genera Copilot…',
     o: ['Sale directo al cliente, para eso está', 'Lo revisa y lo firma una persona', 'Es responsabilidad de Microsoft', 'No lo lee nadie, con la IA basta'],
     a: 1, exp: 'La IA redacta; tú revisas y tú firmas. El becario brillante, siempre.' },
+  { q: '🔥 BONUS · En Copilot Studio, ¿qué ventaja tiene conectar SharePoint como conocimiento frente a subir el archivo a mano?',
+    o: ['Se sincroniza solo y respeta los permisos de cada usuario', 'Ninguna, es exactamente lo mismo', 'Los archivos subidos a mano responden más rápido', 'SharePoint solo funciona con PDFs'],
+    a: 0, bonus: true,
+    exp: 'El archivo subido es una copia estática: si cambia, hay que resubirlo. Conectado por SharePoint se actualiza solo y cada usuario solo obtiene respuestas de lo que ya puede ver.' },
+  { q: '🔥 BONUS · ¿Qué ajuste de un agente evita que conteste «de su cosecha» cuando no encuentra el dato?',
+    o: ['Desactivar las respuestas no fundamentadas (sin fuentes)', 'Subirle la creatividad al máximo', 'Ponerle más emojis en las instrucciones', 'Limitar las respuestas a 100 palabras'],
+    a: 0, bonus: true,
+    exp: 'En Copilot Studio se puede desactivar que responda sin fuentes (ungrounded): el agente solo contesta con el conocimiento conectado y, si no está, lo dice. Nuestra regla de la casa, hecha configuración.' },
+  { q: '🔥 BONUS · Para que un flujo rellene una plantilla de Word automáticamente (contratos, fichas) hace falta…',
+    o: ['El conector premium de Word en Power Automate', 'Nada, viene con cualquier cuenta', 'Un desarrollador y tres meses', 'Imprimir la plantilla primero'],
+    a: 0, bonus: true,
+    exp: 'La acción «Rellenar plantilla de Word» es un conector premium (licencia de Power Automate Premium). Está en la lista de la reunión con IT — y es la pieza del futuro agente de contratos.' },
 ];
 
 function shuffle(arr) {
@@ -105,7 +117,7 @@ export default function QuizRutas() {
     if (!n) return;
     try { localStorage.setItem('quiz_nick', n); } catch (e) {}
     setOrder(QUESTIONS.map((item) => ({
-      q: item.q, exp: item.exp,
+      q: item.q, exp: item.exp, bonus: !!item.bonus,
       opts: shuffle(item.o.map((t, i) => ({ t, correct: i === item.a }))),
     })));
     setQi(0); setScore(0); setHits(0); setPicked(null);
@@ -123,7 +135,7 @@ export default function QuizRutas() {
     clearInterval(timerRef.current);
     setPicked(i);
     if (order[qi].opts[i].correct) {
-      setScore((s) => s + 100 + Math.round(timeLeft * 2));
+      setScore((s) => s + (order[qi].bonus ? 150 + Math.round(timeLeft * 3) : 100 + Math.round(timeLeft * 2)));
       setHits((h) => h + 1);
     }
   }
@@ -152,7 +164,7 @@ export default function QuizRutas() {
         <div className="card">
           <div className="big">🏆</div>
           <h1>Quiz · Las rutas de Copilot</h1>
-          <p className="sub">10 preguntas de las dos rutas de Microsoft Learn · {TIME} segundos cada una · responder rápido da puntos extra</p>
+          <p className="sub">10 preguntas de las dos rutas + 3 BONUS para valientes 🔥 · {TIME} segundos cada una · rápido da puntos extra y las bonus valen más</p>
           <input value={nick} onChange={(e) => setNick(e.target.value)} maxLength={30}
             placeholder="Tu nombre (o nombre de guerra)" onKeyDown={(e) => e.key === 'Enter' && start()} />
           <button className="go" onClick={start} disabled={!nick.trim()}>¡A jugar!</button>
