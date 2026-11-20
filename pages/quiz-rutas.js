@@ -145,13 +145,14 @@ export default function QuizRutas() {
     const ms = Date.now() - startRef.current;
     setScreen('end');
     try {
-      await fetch('/api/quiz-scores', {
+      const r = await fetch('/api/quiz-scores', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ quiz: QUIZ_ID, nick: nick.trim(), score, hits, ms }),
       });
+      if (!r.ok) throw new Error('save failed');
       fetchBoard();
-    } catch (e) { setBoardNote('Tu puntuación no se pudo guardar — dilo en voz alta 😅'); }
+    } catch (e) { setBoardNote('⚠️ Tu puntuación NO se pudo guardar — apúntala y dilo en voz alta.'); }
   }
 
   const cur = order[qi];
